@@ -134,10 +134,20 @@
         最大数百体出すので、3倍密度で描くと描画が先に音を上げる。
       */
       function fitCanvas() {
-        var dpr = Math.min(window.devicePixelRatio || 1, 2);
         var rect = canvas.getBoundingClientRect();
-        var w = Math.max(1, Math.round(rect.width * dpr));
-        var h = Math.max(1, Math.round(rect.height * dpr));
+
+        /*
+          【0を書き込まないこと】
+          読み込み直後・タブが裏・親が display:none のときは寸法が 0 で返る。
+          そのまま反映すると解像度 1x1 に潰れ、次にリサイズが起きるまで
+          その大きさで描き続ける（実際に本番で 1x1 になった）。
+          まともな寸法が取れるまでは、属性で指定した 540x960 のままにしておく。
+        */
+        if (rect.width < 2 || rect.height < 2) return;
+
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var w = Math.round(rect.width * dpr);
+        var h = Math.round(rect.height * dpr);
         if (canvas.width !== w || canvas.height !== h) {
           canvas.width = w;
           canvas.height = h;
@@ -163,6 +173,11 @@
       if (window.ResizeObserver) new ResizeObserver(fitCanvas).observe(canvas);
       window.addEventListener("resize", fitCanvas);
       window.addEventListener("orientationchange", fitCanvas);
+      window.addEventListener("load", fitCanvas);
+      // 裏で読み込まれたときは寸法が取れない。表に出た時点でもう一度合わせる
+      document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) fitCanvas();
+      });
 
       document.querySelector("#unity-loading-bar").style.display = "block";
 
