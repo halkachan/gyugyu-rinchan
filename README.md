@@ -1,6 +1,6 @@
 # ぎゅうぎゅうりんちゃん
 
-**ver 1.0.0**（2026-08-22 公開）
+**ver 1.1.0**（2026-08-22）／ ver 1.0.0 公開: 2026-08-22
 
 Unity WebGL のメダルプッシャーゲーム。https://halkaclub.com/game/gyugyu-rinchan/ から遊べます。
 
